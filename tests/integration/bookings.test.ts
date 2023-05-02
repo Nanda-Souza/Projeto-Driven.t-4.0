@@ -229,27 +229,34 @@ describe('GET /booking', () => {
       expect(response.status).toEqual(httpStatus.NOT_FOUND);
     });
 
-    /*it('should respond with status 200 and with payment data', async () => {
+    it('should respond with status 200 and return the created booking', async () => {
       const user = await createUser();
+
       const token = await generateValidToken(user);
+
       const enrollment = await createEnrollmentWithAddress(user);
-      const ticketType = await createTicketType();
-      const ticket = await createTicket(enrollment.id, ticketType.id, TicketStatus.RESERVED);
 
-      const payment = await createPayment(ticket.id, ticketType.price);
+      const ticketType = await createTicketTypeWithHotel();
 
-      const response = await server.get(`/payments?ticketId=${ticket.id}`).set('Authorization', `Bearer ${token}`);
+      await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
 
-      expect(response.status).toEqual(httpStatus.OK);
+      const hotel = await createHotel();
+
+      const room = await createRoomWithHotelId(hotel.id);
+
+      const booking = await createBooking(user.id, room.id);
+
+      const response = await server.get('/booking').set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(httpStatus.OK);
       expect(response.body).toEqual({
-        id: expect.any(Number),
-        ticketId: ticket.id,
-        value: ticketType.price,
-        cardIssuer: payment.cardIssuer,
-        cardLastDigits: payment.cardLastDigits,
-        createdAt: expect.any(String),
-        updatedAt: expect.any(String),
+        id: booking.id,
+        Room: {
+          ...room,
+          createdAt: room.createdAt.toISOString(),
+          updatedAt: room.updatedAt.toISOString(),
+        },
       });
-    });*/
+    });
   });
 });
