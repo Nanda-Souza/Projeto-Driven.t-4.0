@@ -52,7 +52,20 @@ async function bookingReservation(userId: number, roomId: number) {
   return reservation;
 }
 
+async function updateReservation(userId: number, bookingId: number, roomId: number) {
+  const booking = await bookingsRepository.findBookingById(bookingId);
+
+  if (!booking || booking.userId !== userId) throw bookingError();
+
+  await checkRoomAvailability(roomId);
+
+  const reservation = await bookingsRepository.updateBooking(bookingId, roomId);
+
+  return reservation;
+}
+
 export default {
   getBookingByUserId,
   bookingReservation,
+  updateReservation,
 };

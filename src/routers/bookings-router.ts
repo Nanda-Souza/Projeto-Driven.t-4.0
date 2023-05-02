@@ -1,10 +1,15 @@
 import { Router } from 'express';
-import { authenticateToken, validateBody } from '@/middlewares';
+import { authenticateToken, validateBody, validateParams } from '@/middlewares';
 import { roomsSchema } from '@/schemas/rooms-schemas';
-import { getBooking, postBooking } from '@/controllers';
+import { bookingsSchema } from '@/schemas/booking-schemas';
+import { getBooking, postBooking, putBooking } from '@/controllers';
 
 const bookingsRouter = Router();
 
-bookingsRouter.all('/*', authenticateToken).get('/', getBooking).post('/', validateBody(roomsSchema), postBooking);
+bookingsRouter
+  .all('/*', authenticateToken)
+  .get('/', getBooking)
+  .post('/', validateBody(roomsSchema), postBooking)
+  .put('/', validateBody(roomsSchema), validateParams(bookingsSchema), putBooking);
 
 export { bookingsRouter };
