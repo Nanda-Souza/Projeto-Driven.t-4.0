@@ -15,6 +15,7 @@ import {
   createHotel,
   createRoomWithHotelId,
   createFullRoom,
+  createHotelRoom,
 } from '../factories';
 import app, { init } from '@/app';
 
@@ -363,7 +364,7 @@ describe('PUT /booking/:bookingId', () => {
       expect(response.status).toBe(httpStatus.FORBIDDEN);
     });
 
-    /*it('should respond with status 404 if room does not exists', async () => {
+    it('should respond with status 404 if room does not exists', async () => {
       const user = await createUser();
 
       const token = await generateValidToken(user);
@@ -376,16 +377,18 @@ describe('PUT /booking/:bookingId', () => {
 
       const hotel = await createHotel();
 
-      await createRoomWithHotelId(hotel.id);
+      const room = await createFullRoom(hotel.id);
+
+      const booking = await createBooking(user.id, room.id);
 
       const body = { roomId: 0 };
 
-      const response = await server.post('/booking').set('Authorization', `Bearer ${token}`).send(body);
+      const response = await server.put(`/booking/${booking.id}`).set('Authorization', `Bearer ${token}`).send(body);
 
       expect(response.status).toBe(httpStatus.NOT_FOUND);
     });
 
-    it('should respond with status 200 returning the bookingId', async () => {
+    it('should respond with status 200 returning the updated bookingId', async () => {
       const user = await createUser();
 
       const token = await generateValidToken(user);
@@ -400,12 +403,16 @@ describe('PUT /booking/:bookingId', () => {
 
       const room = await createRoomWithHotelId(hotel.id);
 
-      const body = { roomId: room.id };
+      const anotherRoom = await createHotelRoom(hotel.id);
 
-      const response = await server.post('/booking').set('Authorization', `Bearer ${token}`).send(body);
+      const booking = await createBooking(user.id, room.id);
+
+      const body = { roomId: anotherRoom.id };
+
+      const response = await server.put(`/booking/${booking.id}`).set('Authorization', `Bearer ${token}`).send(body);
 
       expect(response.status).toBe(httpStatus.OK);
       expect(response.body).toEqual({ bookingId: expect.any(Number) });
-    });*/
+    });
   });
 });
