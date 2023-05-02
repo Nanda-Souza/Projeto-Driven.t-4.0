@@ -11,6 +11,16 @@ export async function createHotel() {
   });
 }
 
+export async function createFullRoom(hotelId: number) {
+  return await prisma.room.create({
+    data: {
+      name: faker.name.findName(),
+      capacity: 1,
+      hotelId,
+    },
+  });
+}
+
 export async function createRoomWithHotelId(hotelId: number) {
   return prisma.room.create({
     data: {
