@@ -15,22 +15,15 @@ export async function getBooking(req: AuthenticatedRequest, res: Response, next:
   }
 }
 
-/*export async function paymentProcess(req: AuthenticatedRequest, res: Response) {
-  const { userId } = req;
-  const { ticketId, cardData } = req.body;
-
+export async function postBooking(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   try {
-    if (!ticketId || !cardData) return res.sendStatus(httpStatus.BAD_REQUEST);
+    const { userId } = req;
+    const { roomId } = req.body as { roomId: number };
 
-    const payment = await paymentsService.paymentProcess(ticketId, userId, cardData);
-    if (!payment) return res.sendStatus(httpStatus.NOT_FOUND);
+    const booking = await bookingsService.bookingReservation(userId, roomId);
 
-    return res.status(httpStatus.OK).send(payment);
-  } catch (error) {
-    if (error.name === 'UnauthorizedError') {
-      return res.sendStatus(httpStatus.UNAUTHORIZED);
-    }
-    return res.sendStatus(httpStatus.NOT_FOUND);
+    return res.status(httpStatus.OK).send({ bookingId: booking.id });
+  } catch (e) {
+    next(e);
   }
 }
-*/

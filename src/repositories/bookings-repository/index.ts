@@ -1,5 +1,5 @@
 import { prisma } from '@/config';
-//import { PaymentParams } from '@/protocols';
+import { BookingParams } from '@/protocols';
 
 async function findBookingByUserId(userId: number) {
   return prisma.booking.findFirst({
@@ -11,15 +11,15 @@ async function findBookingByUserId(userId: number) {
   });
 }
 
-/*async function createPayment(ticketId: number, params: PaymentParams) {
-  return prisma.payment.create({
+async function createBooking(params: BookingParams) {
+  return prisma.booking.create({
     data: {
-      ticketId,
       ...params,
     },
   });
-}*/
+}
 
 export default {
   findBookingByUserId,
+  createBooking,
 };
